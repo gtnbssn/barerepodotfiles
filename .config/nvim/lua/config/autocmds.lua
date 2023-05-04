@@ -11,17 +11,38 @@ vim.api.nvim_create_autocmd("BufEnter", {
   group = augroup("vertHelp"),
 })
 
+vim.api.nvim_create_augroup("extraft", { clear = true })
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   pattern = "*.astro",
   callback = function()
     vim.bo.filetype = "astro"
   end,
-  group = augroup("extraft"),
+  group = "extraft",
 })
 vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   pattern = "*.geojson",
   callback = function()
     vim.bo.filetype = "json"
   end,
-  group = "lazyvim_extraft",
+  group = "extraft",
+})
+
+vim.api.nvim_create_augroup("cursorLine", { clear = true })
+vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter" }, {
+  callback = function()
+    vim.schedule(function()
+      if vim.bo.filetype == "TelescopePrompt" then
+        vim.opt_local.cursorline = false
+      else
+        vim.opt_local.cursorline = true
+      end
+    end)
+  end,
+  group = "cursorLine",
+})
+vim.api.nvim_create_autocmd("WinLeave", {
+  callback = function()
+    vim.opt_local.cursorline = false
+  end,
+  group = "cursorLine",
 })
