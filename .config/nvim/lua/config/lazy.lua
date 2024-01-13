@@ -6,6 +6,50 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 
+local function cleanhover(_, result, ctx, cleanhoverconfig)
+  local config = cleanhoverconfig or {}
+  config.focus_id = ctx.method
+  if not (result and result.contents) then
+    return
+  end
+  local markdown_lines = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
+  markdown_lines = vim.lsp.util.trim_empty_lines(markdown_lines)
+  if vim.tbl_isempty(markdown_lines) then
+    return
+  end
+  return vim.lsp.util.open_floating_preview(markdown_lines, "markdown", config)
+end
+
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(cleanhover, {
+  border = "solid",
+  width = 70,
+})
+
+-- vim.lsp.handlers["wgsl-analyzer/requestConfiguration"] = function(err, result, ctx, config)
+--   return {
+--     success = true,
+--     customImports = { _dummy_ = "dummy" },
+--     shaderDefs = {},
+--     trace = {
+--       extension = false,
+--       server = false,
+--     },
+--     inlayHints = {
+--       enabled = false,
+--       typeHints = false,
+--       parameterHints = false,
+--       structLayoutHints = false,
+--       typeVerbosity = "inner",
+--     },
+--     diagnostics = {
+--       typeErrors = true,
+--       nagaParsingErrors = true,
+--       nagaValidationErrors = true,
+--       nagaVersion = "main",
+--     },
+--   }
+-- end
+
 require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
@@ -13,6 +57,11 @@ require("lazy").setup({
     -- import any extras modules here
     { import = "lazyvim.plugins.extras.lang.typescript" },
     { import = "lazyvim.plugins.extras.lang.json" },
+    { import = "lazyvim.plugins.extras.lang.tailwind" },
+    { import = "lazyvim.plugins.extras.formatting.prettier" },
+    { import = "lazyvim.plugins.extras.linting.eslint" },
+    { import = "lazyvim.plugins.extras.lang.python" },
+    { import = "lazyvim.plugins.extras.coding.yanky" },
     { import = "lazyvim.plugins.extras.ui.mini-animate" },
     -- import/override with your plugins
     { import = "plugins" },

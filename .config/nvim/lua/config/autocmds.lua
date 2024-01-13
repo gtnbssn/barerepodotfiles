@@ -26,6 +26,13 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
   end,
   group = "extraft",
 })
+vim.api.nvim_create_autocmd({ "BufEnter", "BufRead" }, {
+  pattern = "*.wgsl",
+  callback = function()
+    vim.bo.filetype = "wgsl"
+  end,
+  group = "extraft",
+})
 
 vim.api.nvim_create_augroup("cursorLine", { clear = true })
 vim.api.nvim_create_autocmd({ "VimEnter", "WinEnter", "BufWinEnter" }, {
